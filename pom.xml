@@ -43,7 +43,7 @@
         <freemarker.version>2.3.32</freemarker.version>
         <stax-api.version>1.0.1</stax-api.version>
         <xmlbeans.version>3.0.2</xmlbeans.version>
-        <json-path.version>2.4.0</json-path.version>
+        <json-path.version>2.9.0</json-path.version>
         <checker-compat-qual.version>2.0.0</checker-compat-qual.version>
         <java-string-similarity.version>2.0.0</java-string-similarity.version>
         <checker-qual.version>3.33.0</checker-qual.version>
