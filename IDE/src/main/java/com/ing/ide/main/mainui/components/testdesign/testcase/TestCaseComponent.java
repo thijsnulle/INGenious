@@ -404,7 +404,7 @@ public class TestCaseComponent extends JPanel implements ActionListener {
             case "Toggle Validation":
                 validator.toggleValidation();
                 break;
-            case "Paramterize":
+            case "Parameterize":
                 parameterizeSelectedSteps();
                 break;
             case "Up One Level":
