@@ -69,6 +69,8 @@ public class INGeniousSettings extends javax.swing.JFrame {
 
     private XTablePanel uDPanel;
     
+    private XTablePanel lambdatestCapsPanel;
+    
     private XTablePanel KafkaSSLConfigsPanel;
     
     private ConnectButton mailConnect;
@@ -98,6 +100,10 @@ public class INGeniousSettings extends javax.swing.JFrame {
         //Added for Kafka SSL certificate settings
         KafkaSSLConfigsPanel = new XTablePanel(true);
         runSettingsTab.addTab("Kafka ssl Configurations", KafkaSSLConfigsPanel);
+        
+        //Added for LambdaTest
+        lambdatestCapsPanel = new XTablePanel(true);
+        runSettingsTab.addTab("LambdaTest Capabilities", lambdatestCapsPanel);
         
         
         mailConnect = new ConnectButton() {
@@ -172,6 +178,7 @@ public class INGeniousSettings extends javax.swing.JFrame {
         loadRPSettings();
         loadExtentSettings();
         loadKafkaSSLConfigurations();
+        loadLambdaTestCapabilities();
         showSettings();
     }
 
@@ -198,6 +205,7 @@ public class INGeniousSettings extends javax.swing.JFrame {
         loadRPSettings();
         loadExtentSettings();
         loadKafkaSSLConfigurations();
+        loadLambdaTestCapabilities();
     }
 
     private void loadRunSettings() {
@@ -291,13 +299,19 @@ public class INGeniousSettings extends javax.swing.JFrame {
                 rpSettingsPanel.table);
     }
     
+    private void loadLambdaTestCapabilities() {
+        PropUtils.loadPropertiesInTable(
+                sProject.getProjectSettings().getLambdaTestCaps(),
+                lambdatestCapsPanel.table);
+    }
+    
     private void loadExtentSettings() {
         PropUtils.loadPropertiesInTable(
                 sProject.getProjectSettings().getExtentSettings(),
                 extentSettingsPanel.table);
     }
     
-        private void loadKafkaSSLConfigurations() {
+    private void loadKafkaSSLConfigurations() {
         PropUtils.loadPropertiesInTable(
                 sProject.getProjectSettings().getKafkaSSLConfigurations(),
                 KafkaSSLConfigsPanel.table);
@@ -415,13 +429,20 @@ public class INGeniousSettings extends javax.swing.JFrame {
         sProject.getProjectSettings().getExtentSettings().save();
     }
     
-        private void saveKafkaSSLConfigurations() {
+    private void saveKafkaSSLConfigurations() {
 //        Properties properties = encryptpassword(PropUtils.getPropertiesFromTable(((XTablePanel) KafkaSSLConfigsPanel).table), " Enc");
        Properties properties = PropUtils.getPropertiesFromTable( KafkaSSLConfigsPanel.table);       
 //        PropUtils.loadPropertiesInTable(properties, KafkaSSLConfigsPanel.table, "");
         sProject.getProjectSettings().getKafkaSSLConfigurations().set(properties);
         sProject.getProjectSettings().getKafkaSSLConfigurations().save();
     }
+        
+    private void saveLambdaTestCaps() {
+        Properties properties = encryptpassword(PropUtils.getPropertiesFromTable(((XTablePanel) lambdatestCapsPanel).table), " Enc");
+        PropUtils.loadPropertiesInTable(properties, lambdatestCapsPanel.table, "");
+        sProject.getProjectSettings().getLambdaTestCaps().set(properties);
+        sProject.getProjectSettings().getLambdaTestCaps().save();
+    }   
         
     public void saveAll() {
         saveRunSettings();
@@ -431,6 +452,7 @@ public class INGeniousSettings extends javax.swing.JFrame {
         saveRPSettings();
         saveExtentSettings();
         saveKafkaSSLConfigurations();
+        saveLambdaTestCaps();
     }
 
     private void loadTMTestSetSettings(String module) {

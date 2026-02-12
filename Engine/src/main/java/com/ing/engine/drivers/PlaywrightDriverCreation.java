@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import com.microsoft.playwright.*;
+import java.io.UnsupportedEncodingException;
 import java.nio.file.Paths;
 
 /**
@@ -33,7 +34,7 @@ public class PlaywrightDriverCreation {
     public void setPage(Page page) {
         this.page = page;
     }
-    public void launchDriver(RunContext context) throws UnCaughtException {
+    public void launchDriver(RunContext context) throws UnCaughtException, UnsupportedEncodingException {
         runContext = context;
         System.out.println("\n🚀 Launching " + runContext.BrowserName+"\n");
         try {
@@ -62,7 +63,7 @@ public class PlaywrightDriverCreation {
         }
     }
 
-    public void launchDriver(String browser) throws UnCaughtException {
+    public void launchDriver(String browser) throws UnCaughtException, UnsupportedEncodingException {
         RunContext context = new RunContext();
         context.BrowserName = browser;
         context.Browser = Browser.fromString(browser);
@@ -90,7 +91,7 @@ public class PlaywrightDriverCreation {
         browserContext.close();
     }
 
-    public void RestartBrowser() throws UnCaughtException {
+    public void RestartBrowser() throws UnCaughtException, UnsupportedEncodingException {
         StopBrowser();
         StartBrowser(runContext.BrowserName);
     }
@@ -98,8 +99,10 @@ public class PlaywrightDriverCreation {
     public void StopBrowser() {
         try {
 
-            closeBrowserContext();
+            com.microsoft.playwright.Browser browser = browserContext.browser();
             page.close();
+            closeBrowserContext();
+            browser.close();
 
         } catch (Exception ex) {
             Logger.getLogger(this.getClass().getName()).log(Level.OFF, null, ex);
@@ -108,7 +111,7 @@ public class PlaywrightDriverCreation {
         browserContext = null;
     }
 
-    public void StartBrowser(String b) throws UnCaughtException {
+    public void StartBrowser(String b) throws UnCaughtException, UnsupportedEncodingException {
         StopBrowser();
         launchDriver(b);
     }

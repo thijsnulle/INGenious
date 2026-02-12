@@ -25,6 +25,7 @@ import java.util.logging.Logger;
 
 import com.ing.engine.drivers.WebDriverCreation;
 import com.ing.engine.drivers.WebDriverFactory;
+import java.time.Instant;
 
 public class Control {
 
@@ -38,6 +39,7 @@ public class Control {
     public Boolean executionFinished = false;
     public static ProjectRunner exe;
     public static String triggerId;
+    public static String executionStartTime;
 
     private static PlaywrightDriverCreation playwrightDriver;
 
@@ -109,6 +111,7 @@ public class Control {
         RunManager.loadRunManager();
         ReportManager = new SummaryReport();
         triggerId = UUID.randomUUID().toString().replace("-", "").toUpperCase().substring(0, 15);
+        executionStartTime = String.valueOf(Instant.now());
     }
 
     private void startRun() {

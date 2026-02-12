@@ -453,7 +453,7 @@ public class Webservice extends General {
         /**
          * *** need to add timeout,version******
          */
-        httpClient.put(key, httpClientBuilder.get(key).build());
+        httpClient.put(key, httpClientBuilder.get(key).followRedirects(HttpClient.Redirect.ALWAYS).build());
         httpRequest.put(key, httpRequestBuilder.get(key).build());
         response.put(key, httpClient.get(key).send(httpRequest.get(key), HttpResponse.BodyHandlers.ofString()));
 

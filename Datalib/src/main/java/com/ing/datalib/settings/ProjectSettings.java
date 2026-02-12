@@ -26,6 +26,7 @@ public class ProjectSettings {
     private final DBProperties dbSettings;
     private final ContextOptions contextSettings;
     private final KafkaSSLConfigurations SSLConfigurations;
+    private final LambdaTestCaps lambdaTestCaps;
 
     public ProjectSettings(Project sProject) {
         this.sProject = sProject;
@@ -41,6 +42,7 @@ public class ProjectSettings {
         this.extentSettings = new ExtentReportSettings(getLocation());
         this.contextSettings = new ContextOptions(getLocation());
         this.SSLConfigurations = new KafkaSSLConfigurations(getLocation());
+        this.lambdaTestCaps = new LambdaTestCaps(getLocation());
     }
 
     public void resetLocation() {
@@ -55,6 +57,7 @@ public class ProjectSettings {
         rpSettings.setLocation(getLocation());
         extentSettings.setLocation(getLocation());
         contextSettings.setLocation(getLocation());
+        lambdaTestCaps.setLocation(getLocation());
     }
 
     public final String getLocation() {
@@ -113,6 +116,11 @@ public class ProjectSettings {
     public UserDefinedSettings getUserDefinedSettings() {
         return userDefinedSettings;
     }
+    
+    public LambdaTestCaps getLambdaTestCaps(){
+        return lambdaTestCaps;
+    }
+    
 
     public void save() {
         userDefinedSettings.save();
@@ -125,5 +133,6 @@ public class ProjectSettings {
         extentSettings.save();
         contextSettings.save();
         SSLConfigurations.save();
+        lambdaTestCaps.save();
     }
 }

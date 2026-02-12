@@ -109,7 +109,7 @@ public class RunSettings extends AbstractPropSettings {
     }
 
     public String getRemoteGridURL() {
-        return getProperty("RemoteGridURL", "http://localhost:4444/wd/hub");
+        return getProperty("RemoteGridURL", "wss://cdp.lambdatest.com");
     }
 
     public void setIterationMode(String value) {

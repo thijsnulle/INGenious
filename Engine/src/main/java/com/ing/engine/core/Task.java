@@ -23,6 +23,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.ing.engine.drivers.WebDriverCreation;
+import com.microsoft.playwright.Browser;
+import com.microsoft.playwright.BrowserContext;
+import java.io.UnsupportedEncodingException;
 import java.util.Locale;
 import org.openqa.selenium.JavascriptExecutor;
 
@@ -84,10 +87,16 @@ public class Task implements Runnable {
 
         if (report != null) {
             Status s = report.finalizeReport();
+            //setLambdaTags();
+            if (s.toString().equals("PASS"))
+                setLambdaStatus("passed", "");
+            else
+                setLambdaStatus("failed", "");
             Control.ReportManager.startDate = startexecDate;
             Control.ReportManager.endDate = endEexcDate;
             Control.ReportManager.updateTestCaseResults(runContext, report, s, runTime.timeRun());
             SystemDefaults.reportComplete.set(false);
+            
         }
     }
 
@@ -178,7 +187,7 @@ public class Task implements Runnable {
     }
 
     private void closePlaywrightDriver() {
-        if (playwrightDriver != null && !getRunSettings().useExistingDriver()) {
+        if (playwrightDriver != null && !getRunSettings().useExistingDriver() && !Control.exe.getExecSettings().getRunSettings().isGridExecution()) {
             try {
                 playwrightDriver.closeBrowser();
             } catch (Exception ex) {
@@ -201,7 +210,7 @@ public class Task implements Runnable {
         }
     }
 
-    private void launchPlaywright() throws UnCaughtException {
+    private void launchPlaywright() throws UnCaughtException, UnsupportedEncodingException {
         if (!getRunSettings().useExistingDriver() || playwrightDriver.page == null) {
             playwrightDriver.launchDriver(runContext);
         }
@@ -291,6 +300,11 @@ public class Task implements Runnable {
 
     public boolean isWebDriverExecution() {
          return !isPlaywrightExecution();
+    }
+    
+    public void setLambdaStatus(String status, String remark)
+    {
+      playwrightDriver.page.evaluate("_ => {}", "lambdatest_action: { \"action\": \"setTestStatus\", \"arguments\": { \"status\": \"" + status + "\", \"remark\": \"" + remark + "\"}}");
     }
 
 }
