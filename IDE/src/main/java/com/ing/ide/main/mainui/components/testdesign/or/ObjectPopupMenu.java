@@ -31,7 +31,6 @@ import javax.swing.TransferHandler;
  * (e.g., disabling actions that should not modify shared content).
  * </p>
  */
-
 public class ObjectPopupMenu extends JPopupMenu {
 
     private JMenuItem addPage;
@@ -234,17 +233,14 @@ public class ObjectPopupMenu extends JPopupMenu {
         } else if (selected instanceof ObjectGroup) {
             page = ((ObjectGroup) selected).getParent();
         }
-
         if (page != null && page.getRoot() instanceof com.ing.datalib.or.web.WebOR) {
             com.ing.datalib.or.web.WebOR root = (com.ing.datalib.or.web.WebOR) page.getRoot();
             return root.isShared();
         }
-        
         if (page != null && page.getRoot() instanceof com.ing.datalib.or.mobile.MobileOR) {
             com.ing.datalib.or.mobile.MobileOR root = (com.ing.datalib.or.mobile.MobileOR) page.getRoot();
             return root.isShared();
         }
-        
         return false;
     }
 }

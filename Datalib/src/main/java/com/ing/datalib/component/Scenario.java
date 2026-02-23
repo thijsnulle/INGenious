@@ -22,7 +22,6 @@ import java.util.List;
  * case discovery).
  * </p>
  */
-
 public class Scenario extends DataModel {
 
     private final Project project;
@@ -301,7 +300,6 @@ public class Scenario extends DataModel {
      * @param oldName  existing object name to replace
      * @param newName  new object name to apply
      */
-
     public void refactorObjectName(ORScope scope, String pageName, String oldName, String newName) {
         for (TestCase testCase : testCases) {
             testCase.refactorObjectName(scope, pageName, oldName, newName);
@@ -379,5 +377,4 @@ public class Scenario extends DataModel {
         }
         return false;
     }
-
 }

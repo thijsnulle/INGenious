@@ -52,7 +52,6 @@ import javax.swing.table.DefaultTableModel;
  * </ul>
  * </p>
  */
-
 public class WebORTable extends JPanel implements ActionListener, ItemListener {
     private final XTable table;
     private final FrameToolBar frameToolbar;
@@ -475,14 +474,6 @@ public class WebORTable extends JPanel implements ActionListener, ItemListener {
             titleLabel = new JLabel("Properties");
             titleLabel.setFont(new Font("Default", Font.BOLD, 12));
             add(titleLabel);
-//            setLayout(new javax.swing.BoxLayout(this, javax.swing.BoxLayout.X_AXIS));
-//            setFloatable(false);
-//            add(new javax.swing.Box.Filler(new java.awt.Dimension(10, 0),
-//                    new java.awt.Dimension(10, 0),
-//                    new java.awt.Dimension(10, 32767)));
-//            JLabel label = new JLabel("Properties");
-//            label.setFont(new Font("Default", Font.BOLD, 12));
-//            add(label);
             add(new javax.swing.Box.Filler(new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 0), new java.awt.Dimension(32767, 32767)));
             add(Utils.createLRButton("Add Row", "add", WebORTable.this));
             add(Utils.createLRButton("Delete Rows", "remove", WebORTable.this));

@@ -20,7 +20,6 @@ import java.util.List;
  * (e.g., Project vs Shared) to preserve context across DnD operations.
  * </p>
  */
-
 public class ObjectRepDnD {
 
     Boolean isPage = false;

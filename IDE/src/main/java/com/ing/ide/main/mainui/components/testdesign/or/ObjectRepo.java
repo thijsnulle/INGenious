@@ -37,7 +37,6 @@ import javax.swing.UIManager;
  * This class acts as the entry point for OR maintenance within the Test Design module.
  * </p>
  */
-
 public class ObjectRepo extends JPanel implements ItemListener {
 
     private final TestDesign testDesign;
@@ -94,7 +93,6 @@ public class ObjectRepo extends JPanel implements ItemListener {
     public WebORPanel getWebOR() {
         return webOR;
     }
-
 
     public MobileORPanel getMobileOR() {
         return mobileOR;

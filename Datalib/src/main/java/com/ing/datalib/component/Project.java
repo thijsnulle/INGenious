@@ -42,7 +42,6 @@ import javax.swing.table.TableModel;
  * renames), including scope-aware refactoring for Object Repository references where applicable.
  * </p>
  */
-
 public class Project {
 
     private static final Logger LOGGER = Logger.getLogger(Project.class.getName());
@@ -436,7 +435,6 @@ public class Project {
      * @param oldName  existing object name to replace
      * @param newName  new object name to apply
      */
-
     public void refactorObjectName(ORScope scope, String pageName, String oldName, String newName) {
         for (Scenario scenario : scenarios) {
             scenario.refactorObjectName(scope, pageName, oldName, newName);
@@ -469,8 +467,7 @@ public class Project {
      *
      * @implNote This method performs two refactors per scenario: one for the plain page name and one
      *           for the derived scoped form (e.g., {@code "[Shared] Login"}).
-     */  
-
+     */
     public void refactorPageName(ORScope scope, String oldPageName, String newPageName) {
         String oldScoped = scope == ORScope.SHARED ? "[Shared] " + oldPageName : "[Project] " + oldPageName;
         String newScoped = scope == ORScope.SHARED ? "[Shared] " + newPageName : "[Project] " + newPageName;
@@ -603,5 +600,4 @@ public class Project {
             }
         }
     }
-
 }

@@ -28,7 +28,6 @@ import javax.swing.tree.TreePath;
  *   <li><b>Removal Handling:</b> If the removed object is currently loaded in the table, resets the table before removal completes.</li>
  * </ul>
  */
-
 public class WebObjectTree extends ObjectTree {
     private final WebORPanel oRPanel;
     private final ORSource source;

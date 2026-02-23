@@ -35,7 +35,6 @@ import org.apache.commons.csv.CSVRecord;
  * reusable, or test data reference is used.
  * </p>
  */
-
 public class TestCase extends DataModel {
 
     private Scenario scenario;
@@ -605,7 +604,6 @@ public class TestCase extends DataModel {
         }
     }
 
-    
     /**
      * Renames an object reference on the given page within this test case, restricted to the specified OR scope.
      * A step matches when its reference has the expected scope prefix and its normalized page name equals {@code pageName}.
@@ -615,7 +613,6 @@ public class TestCase extends DataModel {
      * @param oldName  existing object name to replace
      * @param newName  new object name to apply
      */
-
     public void refactorObjectName(ORScope scope, String pageName, String oldName, String newName) {
         Boolean clearOnExit = getTestSteps().isEmpty();
         loadTableModel();
@@ -642,7 +639,6 @@ public class TestCase extends DataModel {
      * @param scope scope to match against
      * @return {@code true} if {@code ref} begins with the prefix for {@code scope}; {@code false} otherwise
      */
-
     private boolean matchesScope(String ref, ORScope scope) {
         if (ref == null) return false;
         ref = ref.trim();
@@ -659,7 +655,6 @@ public class TestCase extends DataModel {
      * @param ref raw reference value (may be {@code null})
      * @return normalized page name without scope prefix (never {@code null})
      */
-
     private String normalizePageRef(String ref) {
         if (ref == null) return "";
         ref = ref.trim();
@@ -748,5 +743,4 @@ public class TestCase extends DataModel {
         }
         return false;
     }
-
 }

@@ -1,16 +1,13 @@
 
 package com.ing.datalib.or.web;
 
-import com.ing.datalib.or.ObjectRepository;
 import com.ing.datalib.or.common.ObjectGroup;
 import com.ing.datalib.or.web.WebOR.ORScope;
-
 
 /**
  * Represents a resolved web object within the Object Repository, including its scope,
  * page name, object name, and resolved object group.
  */
-
 public class ResolvedWebObject {
     private final ORScope scope;
     private final String pageName;
@@ -26,7 +23,6 @@ public class ResolvedWebObject {
     * @param objectName name of the web object
     * @param group      group of matching WebORObject instances
     */
-
     public ResolvedWebObject(ORScope scope, String pageName, String objectName, ObjectGroup<WebORObject> group) {
         this.scope = scope;
         this.pageName = pageName;
@@ -38,7 +34,6 @@ public class ResolvedWebObject {
      * Represents a reference to a page along with its OR scope, and provides utilities
      * for formatting and parsing scoped page tokens.
      */
-    
     public static final class PageRef {
         public final String name;
         public final ORScope scope;
@@ -49,7 +44,6 @@ public class ResolvedWebObject {
          * @param name  page name without prefix
          * @param scope OR scope of the page
          */
-
         public PageRef(String name, ORScope scope) {
             this.name = name;
             this.scope = scope;
@@ -61,7 +55,6 @@ public class ResolvedWebObject {
          *
          * @return fully qualified scoped page name
          */
-        
         public String qualified() {
             if (null == scope) {
                 return name;
@@ -83,7 +76,6 @@ public class ResolvedWebObject {
          * @param token raw page reference text
          * @return parsed PageRef instance
          */
-        
         public static PageRef parse(String token) {
             String s = token == null ? "" : token.trim();
             if (s.isEmpty()) {
@@ -121,7 +113,6 @@ public class ResolvedWebObject {
      *
      * @return a resolved WebORObject or null
      */
-
     public WebORObject getObject() {
         return (group != null && !group.getObjects().isEmpty()) ? group.getObjects().get(0) : null;
     }
@@ -136,7 +127,6 @@ public class ResolvedWebObject {
      *
      * @return formatted debug information
      */
-
     public String debugString() {
         return "ResolvedWebObject{scope=" + scope +
                ", page='" + pageName + '\'' +

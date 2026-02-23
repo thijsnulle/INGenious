@@ -89,7 +89,6 @@ import javax.swing.table.TableCellRenderer;
  * test cases.
  * </p>
  */
-
 public class TestCaseComponent extends JPanel implements ActionListener {
 
     private final TestDesign testDesign;

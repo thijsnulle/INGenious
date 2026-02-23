@@ -30,7 +30,6 @@ import javax.swing.TransferHandler;
  * grouped edits within a TestCase model.
  * </p>
  */
-
 public class TestCaseTableDnD extends TransferHandler {
 
     private transient Object dropObject;

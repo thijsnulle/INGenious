@@ -97,7 +97,6 @@ import java.nio.file.Paths;
  * project instance, retrieving the OR root, and showing impacted test cases.
  * </p>
  */
-
 public abstract class ObjectTree implements ActionListener {
 
     public final JTree tree;
