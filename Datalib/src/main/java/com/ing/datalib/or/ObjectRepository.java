@@ -9,7 +9,12 @@ import com.ing.datalib.or.mobile.MobileOR;
 import com.ing.datalib.or.mobile.MobileORObject;
 import com.ing.datalib.or.mobile.MobileORPage;
 import com.ing.datalib.or.web.WebOR;
+import com.ing.datalib.or.yaml.YamlORReader;
+import com.ing.datalib.or.yaml.YamlORWriter;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
 import com.ing.datalib.or.mobile.ResolvedMobileObject;
 import com.ing.datalib.or.web.ResolvedWebObject;
 import com.ing.datalib.or.web.WebOR.ORScope;
@@ -29,6 +34,7 @@ import java.util.logging.Logger;
  */
 public class ObjectRepository {
     private static final XmlMapper XML_MAPPER = new XmlMapper();
+    private static final ObjectMapper YAML_MAPPER = createYamlMapper();
     private static final Logger LOG = Logger.getLogger(ObjectRepository.class.getName());
 
     private final Project sProject;
@@ -39,6 +45,18 @@ public class ObjectRepository {
     private APIOR apiProjectOR;
     
     private final Set<String> sharedUsageProjects = new HashSet<>();
+    
+    // YAML support
+    private boolean useYamlFormat = false; // Default to XML for backward compatibility
+    private YamlORReader yamlReader;
+    private YamlORWriter yamlWriter;
+    
+    private static ObjectMapper createYamlMapper() {
+        YAMLFactory factory = new YAMLFactory();
+        factory.disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER);
+        factory.enable(YAMLGenerator.Feature.MINIMIZE_QUOTES);
+        return new ObjectMapper(factory);
+    }
 
     /**
      * Creates an ObjectRepository for the given project and loads all OR files
@@ -163,6 +181,9 @@ public class ObjectRepository {
     }
     public String getMORRepLocation() {
         return sProject.getLocation() + File.separator + "MobileObjectRepository";
+    }
+    public String getAPIORRepLocation() {
+        return sProject.getLocation() + File.separator + "APIObjectRepository";
     }
     public String getSharedMORRepLocation() {
         return "Shared" + File.separator + "SharedMobileObjects" + File.separator + "MobileObjectRepository";
@@ -709,67 +730,139 @@ public class ObjectRepository {
     // These methods are placeholders for future YAML OR support integration
     
     /**
-     * Check if using YAML format (currently always returns false).
-     * @return false - XML format is currently used
+     * Check if using YAML format.
+     * @return true if YAML format is enabled, false if using XML
      */
     public boolean isUsingYamlFormat() {
-        return false;
+        return useYamlFormat;
     }
     
     /**
-     * Save a Web page immediately (stub for YAML support).
-     * Currently a no-op as XML format handles saves differently.
+     * Enable or disable YAML format for this repository.
+     * @param useYaml true to use YAML format, false for XML
+     */
+    public void setUseYamlFormat(boolean useYaml) {
+        this.useYamlFormat = useYaml;
+        if (useYaml && yamlReader == null) {
+            yamlReader = new YamlORReader();
+            yamlWriter = new YamlORWriter();
+        }
+    }
+    
+    /**
+     * Save a Web page immediately.
+     * For YAML format, writes individual page file.
+     * For XML format, this is a no-op as XML saves the entire OR at once.
      * @param page the page to save
      */
     public void saveWebPageNow(WebORPage page) {
-        // No-op: XML format doesn't need per-page saves
+        if (useYamlFormat && yamlWriter != null) {
+            try {
+                File orRepLocation = new File(getORRepLocation());
+                File webPagesDir = new File(orRepLocation, "Web/pages");
+                yamlWriter.writeWebPage(page, webPagesDir);
+            } catch (IOException e) {
+                LOG.log(Level.SEVERE, "Failed to save Web page: " + page.getName(), e);
+            }
+        }
+        // XML format doesn't need per-page saves
     }
     
     /**
-     * Save a Mobile page immediately (stub for YAML support).
-     * Currently a no-op as XML format handles saves differently.
+     * Save a Mobile page immediately.
+     * For YAML format, writes individual page file.
+     * For XML format, this is a no-op as XML saves the entire OR at once.
      * @param page the page to save
      */
     public void saveMobilePageNow(MobileORPage page) {
-        // No-op: XML format doesn't need per-page saves
+        if (useYamlFormat && yamlWriter != null) {
+            try {
+                File morRepLocation = new File(getMORRepLocation());
+                File mobilePagesDir = new File(morRepLocation, "Mobile/pages");
+                yamlWriter.writeMobilePage(page, mobilePagesDir);
+            } catch (IOException e) {
+                LOG.log(Level.SEVERE, "Failed to save Mobile page: " + page.getName(), e);
+            }
+        }
+        // XML format doesn't need per-page saves
     }
     
     /**
-     * Save an API page immediately (stub for YAML support).
-     * Currently a no-op as XML format handles saves differently.
+     * Save an API page immediately.
+     * For YAML format, writes individual page file.
+     * For XML format, this is a no-op as XML saves the entire OR at once.
      * @param page the page to save
      */
     public void saveAPIPageNow(com.ing.datalib.or.api.APIORPage page) {
-        // No-op: XML format doesn't need per-page saves
+        if (useYamlFormat && yamlWriter != null) {
+            try {
+                File apiorRepLocation = new File(getAPIORRepLocation());
+                File apiPagesDir = new File(apiorRepLocation, "API/pages");
+                yamlWriter.writeAPIPage(page, apiPagesDir);
+            } catch (IOException e) {
+                LOG.log(Level.SEVERE, "Failed to save API page: " + page.getName(), e);
+            }
+        }
+        // XML format doesn't need per-page saves
     }
     
     /**
-     * Rename a Web page YAML file (stub for YAML support).
+     * Rename a Web page YAML file.
+     * Only works in YAML format mode.
      * @param oldName old page name
      * @param newName new page name
-     * @return true (always succeeds in XML mode)
+     * @return true if renamed successfully, false otherwise
      */
     public boolean renameWebPageYaml(String oldName, String newName) {
-        return true;
+        if (!useYamlFormat || yamlWriter == null) {
+            return true; // XML mode - no-op
+        }
+        try {
+            File orRepLocation = new File(getORRepLocation());
+            return yamlWriter.renameWebPage(oldName, newName, orRepLocation);
+        } catch (Exception e) {
+            LOG.log(Level.SEVERE, "Failed to rename Web page from " + oldName + " to " + newName, e);
+            return false;
+        }
     }
     
     /**
-     * Rename a Mobile page YAML file (stub for YAML support).
+     * Rename a Mobile page YAML file.
+     * Only works in YAML format mode.
      * @param oldName old page name
      * @param newName new page name
-     * @return true (always succeeds in XML mode)
+     * @return true if renamed successfully, false otherwise
      */
     public boolean renameMobilePageYaml(String oldName, String newName) {
-        return true;
+        if (!useYamlFormat || yamlWriter == null) {
+            return true; // XML mode - no-op
+        }
+        try {
+            File morRepLocation = new File(getMORRepLocation());
+            return yamlWriter.renameMobilePage(oldName, newName, morRepLocation);
+        } catch (Exception e) {
+            LOG.log(Level.SEVERE, "Failed to rename Mobile page from " + oldName + " to " + newName, e);
+            return false;
+        }
     }
     
     /**
-     * Rename an API page YAML file (stub for YAML support).
+     * Rename an API page YAML file.
+     * Only works in YAML format mode.
      * @param oldName old page name
      * @param newName new page name
-     * @return true (always succeeds in XML mode)
+     * @return true if renamed successfully, false otherwise
      */
     public boolean renameAPIPageYaml(String oldName, String newName) {
-        return true;
+        if (!useYamlFormat || yamlWriter == null) {
+            return true; // XML mode - no-op
+        }
+        try {
+            File apiorRepLocation = new File(getAPIORRepLocation());
+            return yamlWriter.renameAPIPage(oldName, newName, apiorRepLocation);
+        } catch (Exception e) {
+            LOG.log(Level.SEVERE, "Failed to rename API page from " + oldName + " to " + newName, e);
+            return false;
+        }
     }
 }
