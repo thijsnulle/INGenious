@@ -53,7 +53,7 @@ public class DriverPropertiesTest {
         assertThat(defaultProps).isNotNull();
         assertThat(defaultProps.getProperty("api.alias")).isEqualTo("default");
         assertThat(defaultProps.getProperty("useProxy")).isEqualTo("false");
-        assertThat(defaultProps.getProperty("setSSLCertVerification")).isEqualTo("false");
+        assertThat(defaultProps.getProperty("sslCertificateVerification")).isEqualTo("false");
     }
 
     @Test

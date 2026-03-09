@@ -32,7 +32,14 @@ public class Utility {
   
     public static String getdatetimeString() {
         Date dat = new Date();
-        return DATE_FILE_FORMAT.format(dat) + "_" + TIME_FILE_FORMAT.format(dat);
+        String timeStr = TIME_FILE_FORMAT.format(dat);
+        // Ensure AM/PM is uppercase
+        if (timeStr.endsWith("am")) {
+            timeStr = timeStr.substring(0, timeStr.length() - 2) + "AM";
+        } else if (timeStr.endsWith("pm")) {
+            timeStr = timeStr.substring(0, timeStr.length() - 2) + "PM";
+        }
+        return DATE_FILE_FORMAT.format(dat) + "_" + timeStr;
     }
 
     public static String getdateString() {

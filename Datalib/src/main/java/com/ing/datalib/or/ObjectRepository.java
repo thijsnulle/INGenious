@@ -2,6 +2,7 @@
 package com.ing.datalib.or;
 
 import com.ing.datalib.component.Project;
+import com.ing.datalib.or.api.APIOR;
 import com.ing.datalib.or.common.ORPageInf;
 import com.ing.datalib.or.common.ObjectGroup;
 import com.ing.datalib.or.mobile.MobileOR;
@@ -35,6 +36,7 @@ public class ObjectRepository {
     private WebOR webProjectOR;
     private MobileOR mobileProjectOR;
     private MobileOR mobileSharedOR;
+    private APIOR apiProjectOR;
     
     private final Set<String> sharedUsageProjects = new HashSet<>();
 
@@ -86,6 +88,14 @@ public class ObjectRepository {
             } else {
                 mobileProjectOR = new MobileOR(sProject.getName());
             }
+            
+            File apiorFile = new File(getAPIORLocation());
+            if (apiorFile.exists()) {
+                apiProjectOR = XML_MAPPER.readValue(apiorFile, APIOR.class);
+                apiProjectOR.setName(sProject.getName());
+            } else {
+                apiProjectOR = new APIOR(sProject.getName());
+            }
 
             if (webSharedOR != null) {
                 webSharedOR.setObjectRepository(this);
@@ -110,6 +120,10 @@ public class ObjectRepository {
                 mobileProjectOR.setSaved(true);
                 mobileProjectOR.setScope(MobileOR.ORScope.PROJECT);
             }
+            if (apiProjectOR != null) {
+                apiProjectOR.setObjectRepository(this);
+                apiProjectOR.setSaved(true);
+            }
 
             LOG.log(Level.INFO, "Shared WebOR loaded: {0}", (webSharedOR != null));
             LOG.log(Level.INFO, "Project WebOR loaded: {0}", (webProjectOR != null));
@@ -131,6 +145,9 @@ public class ObjectRepository {
     }
     public String getMORLocation() {
         return sProject.getLocation() + File.separator + "MOR.object";
+    }
+    public String getAPIORLocation() {
+        return sProject.getLocation() + File.separator + "APIOR.object";
     }
     public String getSharedMORLocation() {
         return "Shared" + File.separator + "SharedMobileObjects" + File.separator + "SharedMOR.object";
@@ -164,6 +181,9 @@ public class ObjectRepository {
     }
     public MobileOR getMobileSharedOR() {
         return mobileSharedOR;
+    }
+    public APIOR getAPIOR() {
+        return apiProjectOR;
     }
 
     /**
@@ -217,6 +237,11 @@ public class ObjectRepository {
                 XML_MAPPER.writerWithDefaultPrettyPrinter()
                         .writeValue(new File(getMORLocation()), mobileProjectOR);
                 mobileProjectOR.setSaved(true);
+            }
+            if (apiProjectOR != null && !apiProjectOR.isSaved()) {
+                XML_MAPPER.writerWithDefaultPrettyPrinter()
+                        .writeValue(new File(getAPIORLocation()), apiProjectOR);
+                apiProjectOR.setSaved(true);
             }
         } catch (IOException ex) {
             Logger.getLogger(ObjectRepository.class.getName()).log(Level.SEVERE, null, ex);
@@ -678,5 +703,73 @@ public class ObjectRepository {
         if (sProject != null && sProject.getName() != null && !sProject.getName().isBlank()) {
             sharedUsageProjects.add(sProject.getName());
         }
+    }
+    
+    // ============ YAML-related stub methods for backward compatibility ============
+    // These methods are placeholders for future YAML OR support integration
+    
+    /**
+     * Check if using YAML format (currently always returns false).
+     * @return false - XML format is currently used
+     */
+    public boolean isUsingYamlFormat() {
+        return false;
+    }
+    
+    /**
+     * Save a Web page immediately (stub for YAML support).
+     * Currently a no-op as XML format handles saves differently.
+     * @param page the page to save
+     */
+    public void saveWebPageNow(WebORPage page) {
+        // No-op: XML format doesn't need per-page saves
+    }
+    
+    /**
+     * Save a Mobile page immediately (stub for YAML support).
+     * Currently a no-op as XML format handles saves differently.
+     * @param page the page to save
+     */
+    public void saveMobilePageNow(MobileORPage page) {
+        // No-op: XML format doesn't need per-page saves
+    }
+    
+    /**
+     * Save an API page immediately (stub for YAML support).
+     * Currently a no-op as XML format handles saves differently.
+     * @param page the page to save
+     */
+    public void saveAPIPageNow(com.ing.datalib.or.api.APIORPage page) {
+        // No-op: XML format doesn't need per-page saves
+    }
+    
+    /**
+     * Rename a Web page YAML file (stub for YAML support).
+     * @param oldName old page name
+     * @param newName new page name
+     * @return true (always succeeds in XML mode)
+     */
+    public boolean renameWebPageYaml(String oldName, String newName) {
+        return true;
+    }
+    
+    /**
+     * Rename a Mobile page YAML file (stub for YAML support).
+     * @param oldName old page name
+     * @param newName new page name
+     * @return true (always succeeds in XML mode)
+     */
+    public boolean renameMobilePageYaml(String oldName, String newName) {
+        return true;
+    }
+    
+    /**
+     * Rename an API page YAML file (stub for YAML support).
+     * @param oldName old page name
+     * @param newName new page name
+     * @return true (always succeeds in XML mode)
+     */
+    public boolean renameAPIPageYaml(String oldName, String newName) {
+        return true;
     }
 }

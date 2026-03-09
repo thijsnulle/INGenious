@@ -6,6 +6,7 @@ import com.ing.datalib.or.mobile.ResolvedMobileObject;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.util.Objects;
 import javax.swing.JComponent;
 import javax.swing.UIManager;
 

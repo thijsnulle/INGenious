@@ -186,12 +186,12 @@ public class StringOperationsActionTest {
 
     @Test
     public void testSubstringTwoArgs() throws Exception {
-        // With only 2 args, second arg is start index, end = s.length()-1
+        // With only 2 args, second arg is start index, end = s.length()
         String inputData = "\"Hello\",\"1\"";
         setCommandFields(inputData, "%result%", inputData);
         stringOps.Substring();
-        // s="Hello" (length=5), start=1, end=5-1=4, substring(1,4) = "ell"
-        assertThat(runtimeVars.get("%result%")).isEqualTo("ell");
+        // s="Hello" (length=5), start=1, end=5, substring(1,5) = "ello"
+        assertThat(runtimeVars.get("%result%")).isEqualTo("ello");
     }
 
     @Test
