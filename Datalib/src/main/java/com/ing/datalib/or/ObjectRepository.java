@@ -22,8 +22,12 @@ import com.ing.datalib.or.web.WebORObject;
 import com.ing.datalib.or.web.WebORPage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -36,7 +40,6 @@ public class ObjectRepository {
     private static final XmlMapper XML_MAPPER = new XmlMapper();
     private static final ObjectMapper YAML_MAPPER = createYamlMapper();
     private static final Logger LOG = Logger.getLogger(ObjectRepository.class.getName());
-
     private final Project sProject;
     private WebOR webSharedOR;
     private WebOR webProjectOR;
@@ -163,6 +166,7 @@ public class ObjectRepository {
             } else {
                 apiProjectOR = new APIOR(sProject.getName());
             }
+
             // Set ObjectRepository reference immediately
             if (apiProjectOR != null) {
                 apiProjectOR.setObjectRepository(this);
@@ -189,6 +193,7 @@ public class ObjectRepository {
                 mobileProjectOR.setSaved(true);
             }
             if (apiProjectOR != null) {
+                apiProjectOR.setObjectRepository(this);
                 apiProjectOR.setSaved(true);
             }
 
@@ -196,6 +201,63 @@ public class ObjectRepository {
             LOG.log(Level.INFO, "Project WebOR loaded: {0}", (webProjectOR != null));
             LOG.log(Level.INFO, "Shared MobileOR loaded: {0}", (mobileSharedOR != null));
             LOG.log(Level.INFO, "Project MobileOR loaded: {0}", (mobileProjectOR != null));
+            
+            // Try YAML format first (modern format)
+            if (yamlReader.webORExists(orRepLocation)) {
+                LOG.info("Loading Web OR from YAML format");
+                webProjectOR = yamlReader.readWebOR(orRepLocation);
+                webProjectOR.setName(sProject.getName());
+                useYamlFormat = true;
+            } else if (new File(getORLocation()).exists()) {
+                // Fall back to XML format (legacy)
+                LOG.info("Loading Web OR from XML format");
+                webProjectOR = XML_MAPPER.readValue(new File(getORLocation()), WebOR.class);
+                webProjectOR.setName(sProject.getName());
+                useYamlFormat = false; // Use XML format for legacy projects
+            } else {
+                webProjectOR = new WebOR(sProject.getName());
+                // useYamlFormat stays true for new projects
+            }
+            
+            // Try YAML format first for Mobile OR
+            if (yamlReader.mobileORExists(orRepLocation)) {
+                LOG.info("Loading Mobile OR from YAML format");
+                mobileProjectOR = yamlReader.readMobileOR(orRepLocation);
+                mobileProjectOR.setName(sProject.getName());
+                useYamlFormat = true;
+            } else if (new File(getMORLocation()).exists()) {
+                // Fall back to XML format (legacy)
+                LOG.info("Loading Mobile OR from XML format");
+                mobileProjectOR = XML_MAPPER.readValue(new File(getMORLocation()), MobileOR.class);
+                mobileProjectOR.setName(sProject.getName());
+                useYamlFormat = false; // Use XML format for legacy projects
+            } else {
+                mobileProjectOR = new MobileOR(sProject.getName());
+                // useYamlFormat stays true for new projects
+            }
+
+            // Try YAML format first for API OR
+            if (yamlReader.apiORExists(orRepLocation)) {
+                LOG.info("Loading API OR from YAML format");
+                apiProjectOR = yamlReader.readAPIOR(orRepLocation);
+                apiProjectOR.setName(sProject.getName());
+                useYamlFormat = true;
+            } else if (new File(getAPIORLocation()).exists()) {
+                // Fall back to XML format (legacy)
+                LOG.info("Loading API OR from XML format");
+                apiProjectOR = XML_MAPPER.readValue(new File(getAPIORLocation()), APIOR.class);
+                apiProjectOR.setName(sProject.getName());
+                useYamlFormat = false; // Use XML format for legacy projects
+            } else {
+                apiProjectOR = new APIOR(sProject.getName());
+                // useYamlFormat stays true for new projects
+            }
+
+            webProjectOR.setObjectRepository(this);
+            webProjectOR.setSaved(true);
+            mobileProjectOR.setObjectRepository(this);
+            apiProjectOR.setObjectRepository(this);
+        
         } catch (IOException ex) {
             Logger.getLogger(ObjectRepository.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -262,30 +324,30 @@ public class ObjectRepository {
      */
     public void save() {
         try {
-            java.util.List<String> existingProjects = (webSharedOR != null) ? webSharedOR.getProjects() : java.util.List.of();
-            java.util.LinkedHashSet<String> mergedProjects = new java.util.LinkedHashSet<>();
+            List<String> existingProjects = (webSharedOR != null) ? webSharedOR.getSharedProjects() : java.util.List.of();
+            LinkedHashSet<String> mergedProjects = new LinkedHashSet<>();
             if (existingProjects != null) mergedProjects.addAll(existingProjects);
             mergedProjects.addAll(sharedUsageProjects);
             boolean projectsChanged = false;
             if (webSharedOR != null) {
-                java.util.ArrayList<String> mergedList = new java.util.ArrayList<>(mergedProjects);
-                java.util.List<String> current = webSharedOR.getProjects();
-                projectsChanged = (current == null) || !new java.util.LinkedHashSet<>(current).equals(mergedProjects);
+                ArrayList<String> mergedList = new ArrayList<>(mergedProjects);
+                List<String> current = webSharedOR.getSharedProjects();
+                projectsChanged = (current == null) || !new LinkedHashSet<>(current).equals(mergedProjects);
                 if (projectsChanged) {
-                    webSharedOR.setProjects(mergedList);
+                    webSharedOR.setSharedProjects(mergedList);
                 }
             }
-            java.util.List<String> mExisting = (mobileSharedOR != null) ? mobileSharedOR.getProjects() : java.util.List.of();
-            java.util.LinkedHashSet<String> mMerged = new java.util.LinkedHashSet<>();
+            List<String> mExisting = (mobileSharedOR != null) ? mobileSharedOR.getSharedProjects() : java.util.List.of();
+            LinkedHashSet<String> mMerged = new LinkedHashSet<>();
             if (mExisting != null) mMerged.addAll(mExisting);
             mMerged.addAll(sharedUsageProjects);
             boolean mProjectsChanged = false;
             if (mobileSharedOR != null) {
-                java.util.ArrayList<String> mList = new java.util.ArrayList<>(mMerged);
-                java.util.List<String> mCurrent = mobileSharedOR.getProjects();
-                mProjectsChanged = (mCurrent == null) || !new java.util.LinkedHashSet<>(mCurrent).equals(mMerged);
+                ArrayList<String> mList = new ArrayList<>(mMerged);
+                List<String> mCurrent = mobileSharedOR.getSharedProjects();
+                mProjectsChanged = (mCurrent == null) || !new LinkedHashSet<>(mCurrent).equals(mMerged);
                 if (mProjectsChanged) {
-                    mobileSharedOR.setProjects(mList);
+                    mobileSharedOR.setSharedProjects(mList);
                 }
             }
             
@@ -352,6 +414,46 @@ public class ObjectRepository {
         } catch (IOException ex) {
             Logger.getLogger(ObjectRepository.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+    
+    /**
+     * Save Object Repository in YAML format.
+     * Creates page-per-file structure under ObjectRepository/Web/pages/, ObjectRepository/Mobile/pages/, and ObjectRepository/API/pages/
+     */
+    public void saveAsYaml() {
+        try {
+            File orRepLocation = new File(getORRepLocation());
+            yamlWriter.writeWebOR(webProjectOR, orRepLocation);
+            yamlWriter.writeMobileOR(mobileProjectOR, orRepLocation);
+            yamlWriter.writeAPIOR(apiProjectOR, orRepLocation);
+            webProjectOR.setSaved(true);
+            useYamlFormat = true;
+            LOG.info("Saved Object Repository in YAML format");
+        } catch (IOException ex) {
+            LOG.log(Level.SEVERE, "Error saving Object Repository as YAML", ex);
+        }
+    }
+    
+    /**
+     * Convert existing XML-based OR to YAML format.
+     * This creates YAML files while preserving the original XML files.
+     */
+    public void convertToYaml() {
+        try {
+            File orRepLocation = new File(getORRepLocation());
+            yamlWriter.convertFromXml(webProjectOR, mobileProjectOR, orRepLocation);
+            useYamlFormat = true;
+            LOG.info("Converted Object Repository to YAML format");
+        } catch (IOException ex) {
+            LOG.log(Level.SEVERE, "Error converting Object Repository to YAML", ex);
+        }
+    }
+    
+    /**
+     * Set whether to use YAML format for saving.
+     */
+    public void setUsingYamlFormat(boolean useYaml) {
+        this.useYamlFormat = useYaml;
     }
 
     /**
@@ -615,7 +717,7 @@ public class ObjectRepository {
     /**
      * Generates a unique name by appending "(n)" when duplicates exist.
      */
-    private String generateUniqueName(String baseName, java.util.function.Predicate<String> exists) {
+    private String generateUniqueName(String baseName, Predicate<String> exists) {
         if (baseName == null || baseName.isBlank()) return baseName;
         String candidate = baseName;
         int counter = 1;
@@ -813,7 +915,7 @@ public class ObjectRepository {
     
     // ============ YAML-related stub methods for backward compatibility ============
     // These methods are placeholders for future YAML OR support integration
-    
+
     /**
      * Check if using YAML format.
      * @return true if YAML format is enabled, false if using XML
@@ -821,7 +923,7 @@ public class ObjectRepository {
     public boolean isUsingYamlFormat() {
         return useYamlFormat;
     }
-    
+
     /**
      * Enable or disable YAML format for this repository.
      * @param useYaml true to use YAML format, false for XML

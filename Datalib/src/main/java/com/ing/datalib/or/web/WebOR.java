@@ -6,6 +6,7 @@ import com.ing.datalib.or.common.ORRootInf;
 import com.ing.datalib.or.common.ORUtils;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
@@ -290,11 +291,11 @@ public class WebOR implements ORRootInf<WebORPage> {
         return scope == ORScope.SHARED; 
     }
     
-    public List<String> getProjects() {
-        return projects;
+    public List<String> getSharedProjects() {
+        return isShared() ? projects : Collections.emptyList();
     }
-    
-    public void setProjects(List<String> projects) {
+
+    public void setSharedProjects(List<String> projects) {
         this.projects = (projects == null) ? new ArrayList<>() : projects;
     }
 }
