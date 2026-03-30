@@ -330,13 +330,6 @@
             <artifactId>com.ibm.mq.allclient</artifactId>
             <version>${ibmmq.version}</version>
         </dependency>
-
-        <dependency>
-            <groupId>io.appium</groupId>
-            <artifactId>java-client</artifactId>
-            <version>${appium.version}</version>
-            <type>jar</type>
-        </dependency>
         <dependency>
             <groupId>com.microsoft.sqlserver</groupId>
             <artifactId>mssql-jdbc</artifactId>
