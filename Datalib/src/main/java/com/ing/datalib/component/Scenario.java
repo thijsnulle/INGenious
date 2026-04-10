@@ -5,6 +5,7 @@ import com.ing.datalib.component.utils.FileUtils;
 import com.ing.datalib.or.web.WebOR.ORScope;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -106,6 +107,7 @@ public class Scenario extends DataModel {
             for (String testCase : scenDir.list(FileUtils.CSV_FILTER)) {
                 testCases.add(new TestCase(this, testCase));
             }
+            testCases.sort(Comparator.comparing(TestCase::getName));
         }
     }
 
