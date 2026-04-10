@@ -13,11 +13,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ing.datalib.or.web.WebOR.ORScope;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.LinkedHashSet;
-import java.util.Set;
-import java.util.Objects;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import static java.util.stream.Collectors.toList;
@@ -244,6 +240,7 @@ public class Project {
                 for (String scenario : testPlan.list(DIR_FILTER)) {
                     scenarios.add(new Scenario(this, scenario));
                 }
+                scenarios.sort(Comparator.comparing(Scenario::getName));
             }
             return true;
         }
