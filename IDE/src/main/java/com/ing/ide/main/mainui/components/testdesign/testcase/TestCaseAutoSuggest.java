@@ -117,6 +117,7 @@ public class TestCaseAutoSuggest {
 
     public void installForTestCase() {
         table.getColumnModel().getColumn(0).setMaxWidth(50);
+        table.getColumnModel().getColumn(Action.getIndex()).setPreferredWidth(250);
         table.getColumnModel().getColumn(ObjectName.getIndex()).setCellEditor(new AutoSuggestCellEditor(objAutoSuggest));
         table.getColumnModel().getColumn(Action.getIndex()).setCellEditor(new AutoSuggestCellEditor(actionAutoSuggest));
         table.getColumnModel().getColumn(Condition.getIndex()).setCellEditor(new AutoSuggestCellEditor(conditionAutoSuggest));
@@ -337,12 +338,11 @@ public class TestCaseAutoSuggest {
             return new ArrayList<>();
         }
 
-        private List getReusables() {
-            List reusableList = new ArrayList<>();
-            for (Scenario scenario : sProject.getScenarios()) {
-                int rcount = scenario.getReusableCount();
-                for (int i = 0; i < rcount; i++) {
-                    reusableList.add(scenario.getName() + ":" + scenario.getReusableAt(i).getName());
+        private List<String> getReusables() {
+            List<String> reusableList = new ArrayList<>();
+            for (Scenario scenario : sProject.getReusableScenarios()) {
+                for (TestCase testCase : scenario.getTestCases()) {
+                    reusableList.add(scenario.getName() + ":" + testCase.getName());
                 }
             }
             return reusableList;
