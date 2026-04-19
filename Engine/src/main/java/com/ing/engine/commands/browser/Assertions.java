@@ -260,7 +260,7 @@ public class Assertions extends General {
         try {
             LocatorAssertions.HasCSSOptions options = new LocatorAssertions.HasCSSOptions();
             options.setTimeout(getTimeoutValue());
-            value = (String) Locator.evaluate("(element) => window.getComputetStyle(element).getPropertyValue(" + attributeName + ")");
+            value = (String) Locator.evaluate("(element) => window.getComputedStyle(element).getPropertyValue('" + attributeName + "')");
             highlightElement();
             assertThat(Locator).hasCSS(attributeName, attributeValue, options);
             Report.updateTestLog(Action, "[" + ObjectName + "] has CSS attribute '" + attributeName + "' with value '" + attributeValue + "'", Status.PASS);
@@ -281,7 +281,7 @@ public class Assertions extends General {
         try {
             LocatorAssertions.HasCSSOptions options = new LocatorAssertions.HasCSSOptions();
             options.setTimeout(getTimeoutValue());
-            value = (String) Locator.evaluate("(element) => window.getComputetStyle(element).getPropertyValue(" + attributeName + ")");
+            value = (String) Locator.evaluate("(element) => window.getComputedStyle(element).getPropertyValue('" + attributeName + "')");
             highlightElement();
             assertThat(Locator).not().hasCSS(attributeName, attributeValue, options);
             Report.updateTestLog(Action, "[" + ObjectName + "] does not have CSS attribute '" + attributeName + "' with value '" + attributeValue + "'. Actual value is '" + value + "'", Status.PASS);
