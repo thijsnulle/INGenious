@@ -77,6 +77,8 @@ public class AutomationObject {
     public AutomationObject(BrowserContext BrowserContext) {
         this.browserContext = BrowserContext;
     }
+    
+    public enum LocatorType { LOCATOR, FRAMELOCATOR }
 
     /**
      *
@@ -274,7 +276,7 @@ public class AutomationObject {
     }
 
     private List<Locator> getElements(final List<ORAttribute> attributes) {
-        return getElementsInternal(attributes, (tag, value, options) -> {
+        return getElementsInternal(LocatorType.LOCATOR, attributes, (tag, value, options) -> {
             Locator locator = null;
             switch (tag) {
                 case "Text":
@@ -319,7 +321,7 @@ public class AutomationObject {
     }
 
     private List<Locator> getElements(FrameLocator framelocator, final List<ORAttribute> attributes) {
-        return getElementsInternal(attributes, (tag, value, options) -> {
+        return getElementsInternal(LocatorType.FRAMELOCATOR, attributes, (tag, value, options) -> {
             Locator locator = null;
             switch (tag) {
                 case "Text":
@@ -834,15 +836,14 @@ public class AutomationObject {
         Locator create(String tag, String value, Object options);
     }
 
-    private List<Locator> getElementsInternal(final List<ORAttribute> attributes, LocatorFactory factory) {
+    private List<Locator> getElementsInternal(LocatorType locatorType, final List<ORAttribute> attributes, LocatorFactory factory) {
         if (attributes == null || attributes.isEmpty()) return null;
-        List<Locator> elements = new ArrayList<>();
+        List<Locator> elements = new ArrayList<Locator>();
         for (ORAttribute attr : attributes) {
             String value = getRuntimeValue(attr.getValue() != null ? attr.getValue() : "");
             if (value.trim().isEmpty()) continue;
             String tag = attr.getName();
-            Object options = getOptions(tag, value);
-            value = value.replace(";exact", "").trim();
+            Object options = getOptions(locatorType, tag, value, attr.isExact());
             Locator locator = factory.create(tag, value, options);
             if (locator != null) {
                 elements.add(locator);
@@ -852,42 +853,80 @@ public class AutomationObject {
         return elements.isEmpty() ? null : elements;
     }
 
-    private Object getOptions(String tag, String value) {
+    private Object getOptions(LocatorType locatorType, String tag, String value, Boolean exact) {
         switch (tag) {
             case "Text":
                 Page.GetByTextOptions textOptions = new Page.GetByTextOptions();
-                if (value.toLowerCase().contains(";exact")) {
-                    textOptions.setExact(true);
+                FrameLocator.GetByTextOptions textFrameLocatorOptions = new FrameLocator.GetByTextOptions();
+                
+                if (locatorType.equals(LocatorType.LOCATOR)){
+                    textOptions.setExact(exact);
+                    System.out.println("textOptions : " + textOptions);
+                    return textOptions;
+                } else if (locatorType.equals(LocatorType.FRAMELOCATOR)){
+                    textFrameLocatorOptions.setExact(exact);
+                    System.out.println("textFrameLocatorOptions : " + textFrameLocatorOptions);
+                    return textFrameLocatorOptions;
                 }
-                System.out.println("textOptions : " + textOptions);
-                return textOptions;
+                break;
             case "Label":
                 Page.GetByLabelOptions labelOptions = new Page.GetByLabelOptions();
-                if (value.toLowerCase().contains(";exact")) {
-                    labelOptions.setExact(true);
+                FrameLocator.GetByLabelOptions labelFrameLocatorOptions = new FrameLocator.GetByLabelOptions();
+
+                if (locatorType.equals(LocatorType.LOCATOR)){
+                    labelOptions.setExact(exact);
+                    System.out.println("labelOptions : " + labelOptions);
+                    return labelOptions;
+                } else if (locatorType.equals(LocatorType.FRAMELOCATOR)){
+                    labelFrameLocatorOptions.setExact(exact);
+                    System.out.println("labelFrameLocatorOptions : " + labelFrameLocatorOptions);
+                    return labelFrameLocatorOptions;
                 }
-                return labelOptions;
+                break;
             case "Placeholder":
                 Page.GetByPlaceholderOptions placeholderOptions = new Page.GetByPlaceholderOptions();
-                if (value.toLowerCase().contains(";exact")) {
-                    placeholderOptions.setExact(true);
+                FrameLocator.GetByPlaceholderOptions placeholderFrameLocatorOptions = new FrameLocator.GetByPlaceholderOptions();
+
+                if (locatorType.equals(LocatorType.LOCATOR)){
+                    placeholderOptions.setExact(exact);
+                    System.out.println("placeholderOptions : " + placeholderOptions);
+                    return placeholderOptions;
+                } else if (locatorType.equals(LocatorType.FRAMELOCATOR)){
+                    placeholderFrameLocatorOptions.setExact(exact);
+                    System.out.println("placeholderFrameLocatorOptions : " + placeholderFrameLocatorOptions);
+                    return placeholderFrameLocatorOptions;
                 }
-                return placeholderOptions;
+                break;
             case "AltText":
                 Page.GetByAltTextOptions altTextOptions = new Page.GetByAltTextOptions();
-                if (value.toLowerCase().contains(";exact")) {
-                    altTextOptions.setExact(true);
+                FrameLocator.GetByAltTextOptions altTextFrameLocatorOptions = new FrameLocator.GetByAltTextOptions();
+
+                if (locatorType.equals(LocatorType.LOCATOR)){
+                    altTextOptions.setExact(exact);
+                    System.out.println("altTextOptions : " + altTextOptions);
+                    return altTextOptions;
+                } else if (locatorType.equals(LocatorType.FRAMELOCATOR)){
+                    altTextFrameLocatorOptions.setExact(exact);
+                    System.out.println("altTextFrameLocatorOptions : " + altTextFrameLocatorOptions);
+                    return altTextFrameLocatorOptions;
                 }
-                return altTextOptions;
+                break;
             case "Title":
                 Page.GetByTitleOptions titleOptions = new Page.GetByTitleOptions();
-                if (value.toLowerCase().contains(";exact")) {
-                    titleOptions.setExact(true);
+                FrameLocator.GetByTitleOptions titleFrameLocatorOptions = new FrameLocator.GetByTitleOptions();
+
+                if (locatorType.equals(LocatorType.LOCATOR)){
+                    titleOptions.setExact(exact);
+                    System.out.println("titleOptions : " + titleOptions);
+                    return titleOptions;
+                } else if (locatorType.equals(LocatorType.FRAMELOCATOR)){
+                    titleFrameLocatorOptions.setExact(exact);
+                    System.out.println("titleFrameLocatorOptions : " + titleFrameLocatorOptions);
+                    return titleFrameLocatorOptions;
                 }
-                return titleOptions;
-            default:
-                return null;
+                break;
         }
+        return null;
     }
 
     private Locator createRoleLocator(String value, Page page) {
