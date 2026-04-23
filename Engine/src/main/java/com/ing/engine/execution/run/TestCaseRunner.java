@@ -419,7 +419,12 @@ public class TestCaseRunner {
                         // once exitParamLoop flag is detected
                         if (testCase.exitParamLoop()){
                             if (Parameter.endParamRLoop(testStep.getCondition())){
+                                
+                                // Run the last iteration step
+                                runStep(testStep);
+                                
                                 if (canRunStep(currStep+1)){
+                                    // Skip to the step outside the loop block, after the step with End Param condition
                                     currStep++;
                                     testStep = testCase.getTestSteps().get(currStep);
                                 } else {
