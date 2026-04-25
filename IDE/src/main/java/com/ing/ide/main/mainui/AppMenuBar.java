@@ -218,10 +218,10 @@ public class AppMenuBar extends JMenuBar {
                         Utils.createMenuItem("Options", sActionListener), 'O'));
         
         
-        JCheckBoxMenuItem darkModeItem = new JCheckBoxMenuItem("Dark Mode");
-        darkModeItem.setFont(UIManager.getFont("TableMenu.font"));
-        darkModeItem.addActionListener(sActionListener);
-        configure.add(withMnemonics(darkModeItem, 'D'));
+        // JCheckBoxMenuItem darkModeItem = new JCheckBoxMenuItem("Dark Mode");
+        // darkModeItem.setFont(UIManager.getFont("TableMenu.font"));
+        // darkModeItem.addActionListener(sActionListener);
+        // configure.add(withMnemonics(darkModeItem, 'D'));
     
      return configure;
     }

@@ -140,9 +140,9 @@ public class FXMenuBar extends JFXPanel {
                 menuItem("Options", "settings")
         );
 
-        darkModeItem = new CheckMenuItem("Dark Mode");
-        darkModeItem.setOnAction(e -> fireSwingAction("Dark Mode"));
-        config.getItems().add(darkModeItem);
+        // darkModeItem = new CheckMenuItem("Dark Mode");
+        // darkModeItem.setOnAction(e -> fireSwingAction("Dark Mode"));
+        // config.getItems().add(darkModeItem);
 
         return config;
     }

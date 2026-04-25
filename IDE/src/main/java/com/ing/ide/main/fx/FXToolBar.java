@@ -63,8 +63,8 @@ public class FXToolBar extends JFXPanel {
                 createButton("Browser Configuration", "BrowserConfiguration"),
                 new Separator(),
                 createAPITesterButton(),
-                createSpacer(),
-                createDarkModeToggle()
+                createSpacer()
+                //, createDarkModeToggle()
         );
 
         VBox root = new VBox(toolBar);
