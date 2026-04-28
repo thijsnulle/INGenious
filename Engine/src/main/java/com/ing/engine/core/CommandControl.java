@@ -167,6 +167,8 @@ public abstract class CommandControl {
                 switch (Action) {
                     case "waitForElementToBePresent":
                     case "setObjectProperty":
+                    case "setMobileObjectProperty":
+                    case "setMobileGlobalProperty":
                         return false;
                     default:
                         return true;
@@ -180,6 +182,8 @@ public abstract class CommandControl {
                 switch (Action) {
                     case "waitForElementToBePresent":
                     case "setObjectProperty":
+                    case "setMobileObjectProperty":
+                    case "setMobileGlobalProperty":
                         return false;
                     default:
                         return true;
